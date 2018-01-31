@@ -1,8 +1,7 @@
 <?php
-
 class Interview
 {
-	public $title = 'Interview test';
+	static $title = 'Interview test'; // Called statically below
 }
 
 $lipsum = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Possimus incidunt, quasi aliquid, quod officia commodi magni eum? Provident, sed necessitatibus perferendis nisi illum quos, incidunt sit tempora quasi, pariatur natus.';
@@ -15,7 +14,13 @@ $people = array(
 	array('id'=>5, 'first_name'=>'Doug', 'last_name'=>'Simons', 'email'=>'doug.simons@hotmail.com')
 );
 
-$person = $_POST['person'];
+//Checks for POST variable 'person', if set assigns value to $person otherwise assigns null value
+if(isset($_POST['person'])){
+	$person = $_POST['person'];
+}
+else {
+	$person = null;
+}
 
 ?>
 
@@ -34,16 +39,14 @@ $person = $_POST['person'];
 
 	<?php
 	// Print 10 times
-	for ($i=10; $i<0; $i++) {
-		echo '<p>'+$lipsum+'</p>';
+	for ($i=0; $i<10; $i++) { //with $i=10 this loop will never execute, swapped values so loop will execute properly
+		echo '<p>' . $lipsum . '</p>'; //+ is not used in PHP to concatenate, . is 
 	}
 	?>
 
-
 	<hr>
 
-
-	<form method="get" action="<?=$_SERVER['REQUEST_URI'];?>">
+	<form method="POST"> <?//was using GET, changed to POST to match above, also avoids passing info as part of URL. Using $_SERVER['REQUEST_URI'] is a XSS vulnerability and is not needed here?>
 		<p><label for="firstName">First name</label> <input type="text" name="person[first_name]" id="firstName"></p>
 		<p><label for="lastName">Last name</label> <input type="text" name="person[last_name]" id="lastName"></p>
 		<p><label for="email">Email</label> <input type="text" name="person[email]" id="email"></p>
@@ -54,9 +57,7 @@ $person = $_POST['person'];
 		<p><strong>Person</strong> <?=$person['first_name'];?>, <?=$person['last_name'];?>, <?=$person['email'];?></p>
 	<?php endif; ?>
 
-
 	<hr>
-
 
 	<table>
 		<thead>
@@ -69,9 +70,10 @@ $person = $_POST['person'];
 		<tbody>
 			<?php foreach ($people as $person): ?>
 				<tr>
-					<td><?=$person->first_name;?></td>
-					<td><?=$person->last_name;?></td>
-					<td><?=$person->email;?></td>
+					<?//$person is an array, not an object. Changed below to access index values?>
+					<td><?=$person['first_name'];?></td>
+					<td><?=$person['last_name'];?></td>
+					<td><?=$person['email'];?></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
